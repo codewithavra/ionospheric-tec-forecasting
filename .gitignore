@@ -1,0 +1,22 @@
+# Data
+*_TECU/
+sortedDataSet/
+*.csv
+
+# Model weights
+*.h5
+saved_model/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+.env
+
+
+venv/
+env/
+.venv/
+venv310/
