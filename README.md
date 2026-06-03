@@ -1,27 +1,40 @@
-# Ionospheric TEC Forecasting using Deep Learning
+# Ionospheric TEC Forecasting
 
-Predicts day-ahead Total Electron Content (TEC) from GNSS ground station 
-data using LSTM and Transformer models.
+Forecasting Ionospheric Total Electron Content (TEC) using machine learning and deep learning techniques.
 
-## Project Structure
-code.ipynb        # Full pipeline: preprocessing → training → evaluation
+## Contributors
 
-## Data
-Raw GNSS data from IISC Bangalore receiver (not included in repo).
-Place folders iisc1290_TECU to iisc1690_TECU inside:
-  D:/ProjectMentor/TEC_data/
+- Avranil Dhar (@codewithavra)
+- Amlan Roy
+- Anirban Roy (@Anirban2718)
+- Srijita Roy
+- Kinnori Das
+- Somenath
+- Priyanshu Chakraborty
 
-## How to Run
-1. pip install -r requirements.txt
-2. Update BASE_DIR in the notebook to your local data path
-3. Run all cells top to bottom
+## Directory Structure
+```
+src/
+├── __init__.py
+├── configs/
+│   └── config.py               ← ALL paths + hyperparameters in one place
+├── preprocessing/
+│   ├── dataset.py              ← daily matrix, train/val splits, normalisation
+│   └── sort_tec_data.py        ← raw CSV discovery, minute-max aggregation
+├── models/
+│   ├── lstm_model.py           ← build_lstm()
+│   └── transformer_model.py   ← build_cnn_transformer(), LocalAttentionEncoder
+├── training/
+│   ├── lstm_training.py           ← train_lstm()
+│   └── transformer_training.py   ← train_transformer() + cosine LR schedule
+├── plots/
+│   ├── loss_plots.py           ← plot_lstm_loss(), plot_transformer_loss()
+│   ├── prediction_plots.py    ← plot_lstm_prediction(), plot_transformer_prediction()
+│   └── delay_plots.py         ← per-frequency delay plots + diurnal profile
+└── utils/
+    ├── iono_delay.py           ← mapping_function(), tec_to_iono_delay(), delay_metrics()
+    └── save_results.py         ← save_delay_csv()
+```
+## Attribution
 
-## Models
-- LSTM (2-layer, seq2seq)
-- Transformer (3-layer encoder, sinusoidal positional encoding)
-
-## Results
-| Model       | RMSE (TECU) | MAE (TECU) |
-|-------------|-------------|------------|
-| LSTM        | TBD         | TBD        |
-| Transformer | TBD         | TBD        |
+If you use this project or significant portions of its code, please retain the original copyright notice and provide appropriate attribution to the authors.
