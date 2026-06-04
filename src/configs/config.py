@@ -56,17 +56,19 @@ LSTM_SEED      = 42
 # Transformer Hyperparameters
 #
 
-TRANS_D_MODEL     = 64
-TRANS_NUM_HEADS   = 4
-TRANS_FF_DIM      = 256
-TRANS_NUM_LAYERS  = 2
-TRANS_WINDOW_SIZE = 120
-TRANS_DROPOUT     = 0.0
-TRANS_EPOCHS      = 80
+TRANS_D_MODEL     = 128   # was 64  — more capacity for trend + spikes
+TRANS_NUM_HEADS   = 8     # was 4   — finer attention granularity
+TRANS_FF_DIM      = 512   # was 256 — wider FFN to match larger d_model
+TRANS_NUM_LAYERS  = 4     # was 2   — deeper = learns both local & global patterns
+TRANS_WINDOW_SIZE = 60    # was 120 — 1-hour windows instead of 2-hour (catches spikes better)
+TRANS_DROPOUT     = 0.1   # was 0.0 — light regularisation (only 29 training samples)
+TRANS_EPOCHS      = 150   # was 80  — more room to converge with warmup LR
 TRANS_BATCH       = 4
-TRANS_LR_INIT     = 5e-4
-TRANS_LR_ALPHA    = 1e-5
+TRANS_LR_INIT     = 1e-4  # was 5e-4 — lower peak LR; warmup handles the ramp
+TRANS_LR_ALPHA    = 1e-6  # was 1e-5 — decay to a smaller floor
+TRANS_WARMUP_EPOCHS = 10  # NEW — linear warmup before cosine decay kicks in
 TRANS_SEED        = 42
+
 
 
 
