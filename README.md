@@ -109,11 +109,12 @@ If you use this project or significant portions of its code, please retain the o
 
 ---
 ## Contributors
-
-- Avranil Dhar (@codewithavra)
-- Amlan Roy
-- Anirban Roy (@Anirban2718)
-- Srijita Roy
-- Kinnori Das
-- Somenath
-- Priyanshu Chakraborty
+| Contributor | Username |
+|-------------|----------|
+|Avranil Dhar|[@codewithavra](https://github.com/codewithavra)|
+|Amlan Roy||
+|Anirban Roy|[@Anirban2718](https://github.com/Anirban2718)|
+|Srijita Roy|[@srijita004](https://github.com/srijita004)|
+|Kinnori Das|[@infjbytes](https://github.com/infjbytes)|
+|Somnath Banerjee||
+|Priyanshu Chakraborty||
