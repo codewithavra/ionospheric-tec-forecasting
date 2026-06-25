@@ -9,13 +9,17 @@ _TICK_POS    = np.arange(0, 1441, 120)
 _TICK_LABELS = [f"{h:02d}:00" for h in range(0, 25, 2)]
  
  
-def plot_lstm_prediction(actual: np.ndarray, lstm_pred: np.ndarray) -> None:
+def plot_lstm_prediction(
+    actual: np.ndarray,
+    lstm_pred: np.ndarray,
+    actual_label: str = "Actual Day 41 (iisc1690)",
+) -> tuple[float, float]:
     """Plot LSTM predicted vs actual TEC for Day 41."""
     minutes = np.arange(len(actual))
  
     plt.figure(figsize=(15, 5))
     plt.plot(minutes, actual,    color="steelblue", linewidth=1.4,
-             label="Actual Day 41 (iisc1690)")
+             label=actual_label)
     plt.plot(minutes, lstm_pred, color="tomato",    linewidth=1.4,
              linestyle="--", label="LSTM Predicted Day 41")
  
@@ -36,13 +40,17 @@ def plot_lstm_prediction(actual: np.ndarray, lstm_pred: np.ndarray) -> None:
     return rmse, mae
  
  
-def plot_transformer_prediction(actual: np.ndarray, trans_pred: np.ndarray) -> None:
+def plot_transformer_prediction(
+    actual: np.ndarray,
+    trans_pred: np.ndarray,
+    actual_label: str = "Actual Day 41 (iisc1690)",
+) -> tuple[float, float]:
     """Plot Transformer predicted vs actual TEC for Day 41."""
     minutes = np.arange(len(actual))
  
     plt.figure(figsize=(15, 5))
     plt.plot(minutes, actual,     color="steelblue",  linewidth=1.4,
-             label="Actual Day 41 (iisc1690)")
+             label=actual_label)
     plt.plot(minutes, trans_pred, color="darkorange",  linewidth=1.4,
              linestyle="--", label="Transformer Predicted Day 41")
  
