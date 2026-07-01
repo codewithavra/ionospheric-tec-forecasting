@@ -47,7 +47,7 @@ H_ION    = 350.0       # km
 #
 LSTM_UNITS_1   = 64
 LSTM_UNITS_2   = 32
-LSTM_EPOCHS    = 30
+LSTM_EPOCHS    = 50
 LSTM_BATCH     = 4
 LSTM_OPTIMIZER = "adam"
 LSTM_LOSS      = "mse"
@@ -55,20 +55,13 @@ LSTM_SEED      = 42
 
 #
 # Transformer Hyperparameters  (lightened for CPU / low-VRAM GPU)
-#
-# Key reductions vs previous config:
-#   d_model   128 → 64    (4× fewer params in attention projections)
-#   num_heads   8 → 4     (still 16-dim per head with d_model=64)
-#   ff_dim    512 → 128   (2× d_model — standard ratio)
-#   num_layers  4 → 2     (halves depth; enc-only doesn't need depth for regression)
-#   WINDOW_SIZE removed   (encoder-only has no windowed local attention)
-#
+# 
 TRANS_D_MODEL       = 64     # was 128
 TRANS_NUM_HEADS     = 4      # was 8
 TRANS_FF_DIM        = 128    # was 512
 TRANS_NUM_LAYERS    = 2      # was 4
 TRANS_DROPOUT       = 0.1
-TRANS_EPOCHS        = 30
+TRANS_EPOCHS        = 50
 TRANS_BATCH         = 4
 TRANS_LR_INIT       = 1e-4
 TRANS_LR_ALPHA      = 1e-6
