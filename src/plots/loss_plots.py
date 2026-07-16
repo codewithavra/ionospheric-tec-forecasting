@@ -8,6 +8,10 @@ import matplotlib.pyplot as plt
 def plot_lstm_loss(history) -> None:
     """Plot LSTM training and validation MSE loss curves."""
     epochs_range = range(1, len(history["loss"]) + 1)
+    # Thin the tick labels so they don't collide when there are many
+    # epochs (e.g. LSTM_EPOCHS=50) — always show epoch 1, then every
+    # 10th epoch, same convention as plot_transformer_loss.
+    tick_positions = [e for e in epochs_range if e == 1 or e % 10 == 0]
  
     plt.figure(figsize=(9, 5))
     
@@ -36,7 +40,8 @@ def plot_lstm_loss(history) -> None:
         fontweight="bold")
     
     plt.xticks(
-        epochs_range, 
+        ticks=tick_positions,
+        labels=[str(e) for e in tick_positions],
         fontsize=11, 
         fontweight="bold")
     
