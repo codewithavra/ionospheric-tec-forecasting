@@ -1,25 +1,36 @@
 """
 Training vs validation loss curves for LSTM and Transformer.
 
-Every plot is automatically saved to disk. Filenames encode the plot
-type, the model, an optional dataset label, and today's date, e.g.:
+Every plot is automatically saved to disk under the dataset's
+generated-plots folder (see config.PLOTS_DIR_1 / PLOTS_DIR_2).
+Filenames encode the plot type, the model, and an optional dataset
+label, e.g.:
 
-    loss_lstm_dataset1_2026-07-17.png
-    loss_transformer_dataset2_2026-07-17.png
+    loss_LSTM_dataset1.png
+    loss_transformer_dataset2.png
+
+This module's styling (bold 13pt axis labels, bold 11pt ticks/legend,
+0.35 grid alpha) is the publication style every other plot module is
+matched to — see config.PLOT_* constants.
 """
 
 import os
-from datetime import date
 
 import matplotlib.pyplot as plt
+
+from src.configs.config import (
+    PLOT_LABEL_FONTSIZE, PLOT_LABEL_FONTWEIGHT,
+    PLOT_TICK_FONTSIZE, PLOT_TICK_FONTWEIGHT,
+    PLOT_LEGEND_FONTSIZE, PLOT_LEGEND_FONTWEIGHT,
+    PLOT_GRID_ALPHA, PLOT_DPI,
+)
 
 
 # ── saving helpers ────────────────────────────────────────────────────────────
 
 def _make_filename(*parts: object) -> str:
-    """Build a `part1_part2..._YYYY-MM-DD.png` filename, skipping empty parts."""
+    """Build a `part1_part2..._partN.png` filename, skipping empty parts."""
     clean = [str(p) for p in parts if p not in (None, "")]
-    clean.append(date.today().isoformat())
     return "_".join(clean) + ".png"
 
 
@@ -27,7 +38,7 @@ def _save_current_fig(output_dir: str, *name_parts: object) -> str:
     os.makedirs(output_dir, exist_ok=True)
     filename = _make_filename(*name_parts)
     path = os.path.join(output_dir, filename)
-    plt.savefig(path, dpi=300, bbox_inches="tight")
+    plt.savefig(path, dpi=PLOT_DPI, bbox_inches="tight")
     print(f"Saved: {path}")
     return path
 
@@ -66,29 +77,29 @@ def plot_lstm_loss(
 
     plt.xlabel(
         "Epoch",
-        fontsize=13,
-        fontweight="bold")
+        fontsize=PLOT_LABEL_FONTSIZE,
+        fontweight=PLOT_LABEL_FONTWEIGHT)
     plt.ylabel(
         "MSE Loss",
-        fontsize=13,
-        fontweight="bold")
+        fontsize=PLOT_LABEL_FONTSIZE,
+        fontweight=PLOT_LABEL_FONTWEIGHT)
 
     plt.xticks(
         ticks=tick_positions,
         labels=[str(e) for e in tick_positions],
-        fontsize=11,
-        fontweight="bold")
+        fontsize=PLOT_TICK_FONTSIZE,
+        fontweight=PLOT_TICK_FONTWEIGHT)
 
     plt.yticks(
-        fontsize=11,
-        fontweight="bold")
+        fontsize=PLOT_TICK_FONTSIZE,
+        fontweight=PLOT_TICK_FONTWEIGHT)
 
-    plt.legend(prop={"weight": "bold", "size": 11})
-    plt.grid(True, alpha=0.35)
+    plt.legend(prop={"weight": PLOT_LEGEND_FONTWEIGHT, "size": PLOT_LEGEND_FONTSIZE})
+    plt.grid(True, alpha=PLOT_GRID_ALPHA)
     plt.tight_layout()
 
     if save:
-        _save_current_fig(output_dir, "loss_lstm", dataset_label)
+        _save_current_fig(output_dir, "loss_LSTM", dataset_label)
 
     plt.show()
     plt.close()
@@ -124,22 +135,22 @@ def plot_transformer_loss(
         linestyle="--",
         label="Validation Loss")
 
-    plt.xlabel("Epoch", fontsize=13, fontweight="bold")
+    plt.xlabel("Epoch", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
 
-    plt.ylabel("MSE Loss", fontsize=13, fontweight="bold")
+    plt.ylabel("MSE Loss", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
 
     plt.xticks(
         ticks=tick_positions,
         labels=[str(e) for e in tick_positions],
-        fontsize=11,
-        fontweight="bold")
+        fontsize=PLOT_TICK_FONTSIZE,
+        fontweight=PLOT_TICK_FONTWEIGHT)
 
     plt.yticks(
-        fontsize=11,
-        fontweight="bold")
+        fontsize=PLOT_TICK_FONTSIZE,
+        fontweight=PLOT_TICK_FONTWEIGHT)
 
-    plt.legend(prop={"weight": "bold", "size": 11})
-    plt.grid(True, alpha=0.35)
+    plt.legend(prop={"weight": PLOT_LEGEND_FONTWEIGHT, "size": PLOT_LEGEND_FONTSIZE})
+    plt.grid(True, alpha=PLOT_GRID_ALPHA)
     plt.tight_layout()
 
     if save:
