@@ -17,6 +17,53 @@ OUTPUT_DIR_1 = SORTED_DIR_1
 OUTPUT_DIR_2 = SORTED_DIR_2
 
 #
+# Project Root & Generated-Plot Output Directories
+#
+# config.py lives at src/configs/config.py, so two levels up is the
+# project root (the folder that contains "src", "DataSet", etc.).
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+GENERATED_PLOTS_DIR = PROJECT_ROOT / "generated_plots"
+PLOTS_DIR_1         = GENERATED_PLOTS_DIR / "dataset1_plots"
+PLOTS_DIR_2         = GENERATED_PLOTS_DIR / "dataset2_plots"
+
+# Extra directory for all index and metric-related plots
+METRIC_INDICES_DIR  = GENERATED_PLOTS_DIR / "metric_indices_plots"
+
+# Automatically ensure the metric directory exists when config is loaded
+METRIC_INDICES_DIR.mkdir(parents=True, exist_ok=True)
+
+#
+# Known calendar dates for specific target days.
+# Used to name plot files/labels as real dates instead of "dayN".
+# Add more entries as more mappings become known — anything missing
+# here just falls back to a "dayN" label automatically.
+#
+DATASET_DATES = {
+    2: {40: "09_May_2024", 41: "10_May_2024"},
+}
+
+
+def get_date_label(dataset_id: int, day: int):
+    """Return a filename-safe date label for (dataset_id, day), or None if unknown."""
+    return DATASET_DATES.get(dataset_id, {}).get(day)
+
+
+#
+# Publication-consistent plot styling
+# (matches the LSTM loss-curve look; applied to every plot so figures
+# are consistent when pasted into the paper)
+#
+PLOT_LABEL_FONTSIZE    = 13
+PLOT_LABEL_FONTWEIGHT  = "bold"
+PLOT_TICK_FONTSIZE     = 11
+PLOT_TICK_FONTWEIGHT   = "bold"
+PLOT_LEGEND_FONTSIZE   = 11
+PLOT_LEGEND_FONTWEIGHT = "bold"
+PLOT_GRID_ALPHA        = 0.35
+PLOT_DPI               = 300
+
+#
 # Data Set Constants
 #
 FOLDER_RANGE_1   = (1290, 1690)   # iisc1290_TECU … iisc1690_TECU (inclusive)
@@ -71,4 +118,4 @@ TRANS_SEED          = 42
 #
 #Event Threshold
 #
-EVENT_THRESHOLD_PERCENTILE  = 65
+EVENT_THRESHOLD_PERCENTILE  = 65.0
