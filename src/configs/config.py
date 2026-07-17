@@ -67,3 +67,8 @@ TRANS_LR_INIT       = 1e-4
 TRANS_LR_ALPHA      = 1e-6
 TRANS_WARMUP_EPOCHS = 10
 TRANS_SEED          = 42
+
+#
+#Event Threshold
+#
+EVENT_THRESHOLD_PERCENTILE  = 65
