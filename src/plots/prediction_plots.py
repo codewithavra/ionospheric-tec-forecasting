@@ -1,33 +1,44 @@
 """
 Day-N TEC prediction plots for LSTM and Transformer.
 
-Every plot is automatically saved to disk. Filenames encode the plot
-type, the model, the target day, an optional dataset label, and
-today's date, e.g.:
+Every plot is automatically saved to disk under the dataset's
+generated-plots folder (see config.PLOTS_DIR_1 / PLOTS_DIR_2).
+Filenames encode the plot type, the model, the target day (or its
+real calendar date when known), and an optional dataset label, e.g.:
 
-    prediction_lstm_day41_dataset1_2026-07-17.png
-    prediction_transformer_day40_dataset2_2026-07-17.png
+    actual_vs_predicted_LSTM_10_May_2024_dataset2.png
+    actual_vs_predicted_transformer_day41_dataset1.png
 
 Pass `filename=` to override the auto-generated name, or `save=False`
 to skip saving entirely.
 """
 
 import os
-from datetime import date
 
 import numpy as np
 import matplotlib.pyplot as plt
+
+from src.configs.config import (
+    PLOT_LABEL_FONTSIZE, PLOT_LABEL_FONTWEIGHT,
+    PLOT_TICK_FONTSIZE, PLOT_TICK_FONTWEIGHT,
+    PLOT_LEGEND_FONTSIZE, PLOT_LEGEND_FONTWEIGHT,
+    PLOT_GRID_ALPHA, PLOT_DPI,
+)
 
 _TICK_POS = np.arange(0, 1441, 120)
 _TICK_LABELS = [f"{h:02d}:00" for h in range(0, 25, 2)]
 
 
+def _day_or_date(target_day: int, date_label: str = None) -> str:
+    """Prefer a real calendar date label; fall back to 'dayN'."""
+    return date_label if date_label else f"day{target_day}"
+
+
 # ── saving helpers ────────────────────────────────────────────────────────────
 
 def _make_filename(*parts: object) -> str:
-    """Build a `part1_part2..._YYYY-MM-DD.png` filename, skipping empty parts."""
+    """Build a `part1_part2..._partN.png` filename, skipping empty parts."""
     clean = [str(p) for p in parts if p not in (None, "")]
-    clean.append(date.today().isoformat())
     return "_".join(clean) + ".png"
 
 
@@ -44,8 +55,9 @@ def plot_lstm_prediction(
     actual_label: str = None,
     target_day: int = 41,
     dataset_label: str = None,
+    date_label: str = None,
     legend_loc: str = "best",
-    legend_size: int = 18,
+    legend_size: int = PLOT_LEGEND_FONTSIZE,
     output_dir: str = "plots",
     filename: str = None,
     save: bool = True,
@@ -76,33 +88,34 @@ def plot_lstm_prediction(
         label=f"LSTM Predicted Day {target_day}",
     )
 
-    plt.xlabel("Time of Day (UTC)", fontsize=18, fontweight="bold")
-    plt.ylabel("TEC (TECU)", fontsize=18, fontweight="bold")
+    plt.xlabel("Time of Day (UTC)", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
+    plt.ylabel("TEC (TECU)", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
 
     plt.xticks(
         ticks=_TICK_POS,
         labels=_TICK_LABELS,
         rotation=45,
-        fontsize=15,
+        fontsize=PLOT_TICK_FONTSIZE,
+        fontweight=PLOT_TICK_FONTWEIGHT,
     )
 
-    plt.yticks(fontsize=15)
+    plt.yticks(fontsize=PLOT_TICK_FONTSIZE, fontweight=PLOT_TICK_FONTWEIGHT)
 
     plt.legend(
         loc=legend_loc,
-        prop={"size": legend_size},
+        prop={"weight": PLOT_LEGEND_FONTWEIGHT, "size": legend_size},
     )
 
-    plt.grid(True, alpha=0.3)
+    plt.grid(True, alpha=PLOT_GRID_ALPHA)
     plt.tight_layout()
 
     # Save figure
     if save:
         path = _resolve_save_path(
             output_dir, filename,
-            "prediction_lstm", f"day{target_day}", dataset_label,
+            "actual_vs_predicted_LSTM", _day_or_date(target_day, date_label), dataset_label,
         )
-        plt.savefig(path, dpi=300, bbox_inches="tight")
+        plt.savefig(path, dpi=PLOT_DPI, bbox_inches="tight")
         print(f"Saved: {path}")
 
     plt.show()
@@ -123,8 +136,9 @@ def plot_transformer_prediction(
     actual_label: str = None,
     target_day: int = 41,
     dataset_label: str = None,
+    date_label: str = None,
     legend_loc: str = "best",
-    legend_size: int = 11,
+    legend_size: int = PLOT_LEGEND_FONTSIZE,
     output_dir: str = "plots",
     filename: str = None,
     save: bool = True,
@@ -155,40 +169,40 @@ def plot_transformer_prediction(
         label=f"Transformer Predicted Day {target_day}",
     )
 
-    plt.xlabel("Time of Day (UTC)", fontsize=13, fontweight="bold")
-    plt.ylabel("TEC (TECU)", fontsize=13, fontweight="bold")
+    plt.xlabel("Time of Day (UTC)", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
+    plt.ylabel("TEC (TECU)", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
 
     plt.xticks(
         ticks=_TICK_POS,
         labels=_TICK_LABELS,
         rotation=45,
-        fontsize=11,
-        fontweight="bold",
+        fontsize=PLOT_TICK_FONTSIZE,
+        fontweight=PLOT_TICK_FONTWEIGHT,
     )
 
     plt.yticks(
-        fontsize=11,
-        fontweight="bold",
+        fontsize=PLOT_TICK_FONTSIZE,
+        fontweight=PLOT_TICK_FONTWEIGHT,
     )
 
     plt.legend(
         loc=legend_loc,
         prop={
-            "weight": "bold",
+            "weight": PLOT_LEGEND_FONTWEIGHT,
             "size": legend_size,
         },
     )
 
-    plt.grid(True, alpha=0.3)
+    plt.grid(True, alpha=PLOT_GRID_ALPHA)
     plt.tight_layout()
 
     # Save figure
     if save:
         path = _resolve_save_path(
             output_dir, filename,
-            "prediction_transformer", f"day{target_day}", dataset_label,
+            "actual_vs_predicted_transformer", _day_or_date(target_day, date_label), dataset_label,
         )
-        plt.savefig(path, dpi=300, bbox_inches="tight")
+        plt.savefig(path, dpi=PLOT_DPI, bbox_inches="tight")
         print(f"Saved: {path}")
 
     plt.show()
