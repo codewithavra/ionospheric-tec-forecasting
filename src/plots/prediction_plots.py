@@ -23,10 +23,11 @@ from src.configs.config import (
     PLOT_TICK_FONTSIZE, PLOT_TICK_FONTWEIGHT,
     PLOT_LEGEND_FONTSIZE, PLOT_LEGEND_FONTWEIGHT,
     PLOT_GRID_ALPHA, PLOT_DPI,
+    PLOT_FIGSIZE_SINGLE,
+    get_time_ticks,
 )
 
-_TICK_POS = np.arange(0, 1441, 120)
-_TICK_LABELS = [f"{h:02d}:00" for h in range(0, 24, 2)] + ["23:59"]
+_TICK_POS, _TICK_LABELS = get_time_ticks()
 
 
 def _day_or_date(target_day: int, date_label: str = None) -> str:
@@ -69,7 +70,7 @@ def plot_lstm_prediction(
 
     minutes = np.arange(len(actual))
 
-    plt.figure(figsize=(9, 6))
+    plt.figure(figsize=PLOT_FIGSIZE_SINGLE)
 
     plt.plot(
         minutes,
@@ -150,7 +151,7 @@ def plot_transformer_prediction(
 
     minutes = np.arange(len(actual))
 
-    plt.figure(figsize=(9, 6))
+    plt.figure(figsize=PLOT_FIGSIZE_SINGLE)
 
     plt.plot(
         minutes,
