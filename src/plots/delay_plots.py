@@ -27,13 +27,14 @@ from src.configs.config import (
     PLOT_TICK_FONTSIZE, PLOT_TICK_FONTWEIGHT,
     PLOT_LEGEND_FONTSIZE, PLOT_LEGEND_FONTWEIGHT,
     PLOT_GRID_ALPHA, PLOT_DPI,
+    PLOT_FIGSIZE_SINGLE, PLOT_FIGSIZE_STACKED, PLOT_FIGSIZE_DIURNAL,
     get_date_label,
+    get_time_ticks,
 )
 from src.utils.iono_delay import tec_to_iono_delay
 
 
-_TICK_POS    = np.arange(0, 1441, 120)
-_TICK_LABELS = [f"{h:02d}:00" for h in range(0, 25, 2)]
+_TICK_POS, _TICK_LABELS = get_time_ticks()
 
 _FREQ_NAMES = {F_L1: "L1", F_L2: "L2", F_L5: "L5"}
 
@@ -105,7 +106,7 @@ def plot_lstm_delay(
 
     iono_lstm   = tec_to_iono_delay(lstm_pred, frequency=freq)
 
-    fig, ax = plt.subplots(figsize=(15, 5))
+    fig, ax = plt.subplots(figsize=PLOT_FIGSIZE_SINGLE)
     ax.plot(
         minutes,
         iono_actual,
@@ -174,7 +175,7 @@ def plot_transformer_delay(
 
     iono_trans  = tec_to_iono_delay(trans_pred, frequency=freq)
 
-    fig, ax = plt.subplots(figsize=(15, 5))
+    fig, ax = plt.subplots(figsize=PLOT_FIGSIZE_SINGLE)
     ax.plot(
         minutes,
         iono_actual,
@@ -233,7 +234,7 @@ def _plot_combined_l1_l5_delay(
     minutes = np.arange(len(actual))
     freqs = [(F_L1, "L1"), (F_L5, "L5")]
 
-    fig, axes = plt.subplots(2, 1, figsize=(15, 9), sharex=True)
+    fig, axes = plt.subplots(2, 1, figsize=PLOT_FIGSIZE_STACKED, sharex=True)
 
     for ax, (freq, fname) in zip(axes, freqs):
         iono_actual = tec_to_iono_delay(actual, frequency=freq)
@@ -342,7 +343,7 @@ def plot_diurnal_profile(
     lstm_mu  = hourly_mean(iono_lstm)
     tr_mu    = hourly_mean(iono_trans)
 
-    fig, ax = plt.subplots(figsize=(11, 5))
+    fig, ax = plt.subplots(figsize=PLOT_FIGSIZE_DIURNAL)
     ax.plot(hours, act_mu,  "o-",  color="steelblue", linewidth=1.6, label="Actual")
     ax.plot(hours, lstm_mu, "s--", color="tomato",    linewidth=1.4, label="LSTM")
     ax.plot(hours, tr_mu,   "^--", color="darkorange",linewidth=1.4, label="Transformer")
