@@ -1,6 +1,7 @@
 """
 Ionospheric delay plots:
   - per-model, per-frequency full-day traces
+  - combined L1 + L5 full-day traces (one figure, two stacked panels)
   - diurnal hourly profile comparison
 
 Every plot is automatically saved to disk under the dataset's
@@ -10,6 +11,7 @@ target day (or its real calendar date when known), and an optional
 dataset label, e.g.:
 
     ionospheric_delay_LSTM_L1_10_May_2024_dataset2.png
+    ionospheric_delay_LSTM_L1_L5_combined_10_May_2024_dataset2.png
     diurnal_profile_L1_day41_dataset1.png
 """
 
@@ -210,6 +212,108 @@ def plot_transformer_delay(
     rmse = np.sqrt(np.mean((iono_trans - iono_actual) ** 2))
     mae  = np.mean(np.abs(iono_trans - iono_actual))
     print(f"Transformer {freq} — RMSE: {rmse:.5f} m   MAE: {mae:.5f} m")
+
+
+# ── Combined L1 + L5 delay plots ──────────────────────────────────────────────
+
+def _plot_combined_l1_l5_delay(
+    actual: np.ndarray,
+    pred: np.ndarray,
+    pred_label: str,
+    pred_color: str,
+    target_day: int,
+    dataset_label: str,
+    date_label: str,
+    output_dir: str,
+    save: bool,
+    filename_prefix: str,
+) -> None:
+    """Shared implementation: stacks an L1 panel above an L5 panel,
+    each showing actual vs. predicted ionospheric delay for the full day."""
+    minutes = np.arange(len(actual))
+    freqs = [(F_L1, "L1"), (F_L5, "L5")]
+
+    fig, axes = plt.subplots(2, 1, figsize=(15, 9), sharex=True)
+
+    for ax, (freq, fname) in zip(axes, freqs):
+        iono_actual = tec_to_iono_delay(actual, frequency=freq)
+        iono_pred   = tec_to_iono_delay(pred,   frequency=freq)
+
+        ax.plot(
+            minutes, iono_actual,
+            color="steelblue", linewidth=1.4,
+            label=f"Actual ({fname})")
+        ax.plot(
+            minutes, iono_pred,
+            color=pred_color, linewidth=1.4, linestyle="--",
+            label=f"{pred_label} ({fname})")
+        ax.fill_between(
+            minutes, iono_actual, iono_pred,
+            alpha=0.15, color=pred_color)
+
+        ax.set_ylabel("Iono. Delay (m)", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
+        ax.tick_params(axis="y", labelsize=PLOT_TICK_FONTSIZE)
+        for tick in ax.get_yticklabels():
+            tick.set_fontweight(PLOT_TICK_FONTWEIGHT)
+        ax.legend(prop={"weight": PLOT_LEGEND_FONTWEIGHT, "size": PLOT_LEGEND_FONTSIZE})
+        ax.grid(True, alpha=PLOT_GRID_ALPHA)
+
+        rmse = np.sqrt(np.mean((iono_pred - iono_actual) ** 2))
+        mae  = np.mean(np.abs(iono_pred - iono_actual))
+        print(f"{pred_label} {fname} — RMSE: {rmse:.5f} m   MAE: {mae:.5f} m")
+
+    axes[-1].set_xticks(_TICK_POS)
+    axes[-1].set_xticklabels(_TICK_LABELS, rotation=45, fontsize=PLOT_TICK_FONTSIZE, fontweight=PLOT_TICK_FONTWEIGHT)
+    axes[-1].set_xlabel("Time of Day (UTC)", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
+
+    plt.tight_layout()
+
+    if save:
+        _save_fig(
+            fig, output_dir,
+            filename_prefix, "L1_L5_combined",
+            _day_or_date(target_day, date_label), dataset_label,
+        )
+
+    plt.show()
+
+
+def plot_lstm_delay_l1_l5_combined(
+    actual: np.ndarray,
+    lstm_pred: np.ndarray,
+    target_day: int = 41,
+    dataset_label: str = None,
+    date_label: str = None,
+    output_dir: str = "plots",
+    save: bool = True,
+) -> None:
+    """L1 (top) and L5 (bottom) ionospheric delay, actual vs. LSTM predicted,
+    for the full day — one figure, stacked directly below the per-frequency
+    LSTM delay plots."""
+    _plot_combined_l1_l5_delay(
+        actual, lstm_pred, "LSTM Predicted", "tomato",
+        target_day, dataset_label, date_label, output_dir, save,
+        "ionospheric_delay_LSTM",
+    )
+
+
+def plot_transformer_delay_l1_l5_combined(
+    actual: np.ndarray,
+    trans_pred: np.ndarray,
+    target_day: int = 41,
+    dataset_label: str = None,
+    date_label: str = None,
+    output_dir: str = "plots",
+    save: bool = True,
+) -> None:
+    """L1 (top) and L5 (bottom) ionospheric delay, actual vs. Transformer
+    predicted, for the full day — one figure, stacked directly below the
+    per-frequency Transformer delay plots."""
+    _plot_combined_l1_l5_delay(
+        actual, trans_pred, "Transformer Predicted", "darkorange",
+        target_day, dataset_label, date_label, output_dir, save,
+        "ionospheric_delay_transformer",
+    )
 
 
 # ── Diurnal hourly profile ────────────────────────────────────────────────────
