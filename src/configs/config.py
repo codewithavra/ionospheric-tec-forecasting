@@ -64,6 +64,45 @@ PLOT_GRID_ALPHA        = 0.35
 PLOT_DPI               = 300
 
 #
+# Plot Figure Sizes  (single source of truth — change a size here and
+# every plot that uses it resizes, no need to touch individual plot files)
+#
+PLOT_FIGSIZE_SINGLE  = (9, 6)    # single-panel full-day plots: TEC predictions, per-frequency delay
+PLOT_FIGSIZE_STACKED = (9, 10)   # two-panel stacked plots: combined L1+L5 delay
+PLOT_FIGSIZE_LOSS    = (9, 5)    # training/validation loss curves
+PLOT_FIGSIZE_DIURNAL = (11, 5)   # diurnal hourly profile
+
+#
+# Time-of-Day X-Axis Ticks  (shared by every full-day plot)
+# Ticks are placed every TIME_TICK_INTERVAL_HOURS, with the final tick
+# forced to the real last minute of the day (23:59) instead of 24:00.
+#
+TIME_TICK_INTERVAL_HOURS = 2
+
+
+def get_time_ticks(minutes_per_day: int = None, interval_hours: int = None):
+    """Return (tick_positions, tick_labels) for a full-day x-axis in minutes.
+
+    Ticks run every `interval_hours` starting at 00:00, and the final tick
+    is always the last real minute of the day, labelled "23:59" (never
+    "24:00", which doesn't correspond to an actual data point).
+    """
+    if minutes_per_day is None:
+        minutes_per_day = MINUTES_PER_DAY
+    if interval_hours is None:
+        interval_hours = TIME_TICK_INTERVAL_HOURS
+
+    step = interval_hours * 60
+    positions = list(range(0, minutes_per_day, step))
+    labels = [f"{p // 60:02d}:00" for p in positions]
+
+    positions.append(minutes_per_day - 1)
+    labels.append("23:59")
+
+    return positions, labels
+
+
+#
 # Data Set Constants
 #
 FOLDER_RANGE_1   = (1290, 1690)   # iisc1290_TECU … iisc1690_TECU (inclusive)
