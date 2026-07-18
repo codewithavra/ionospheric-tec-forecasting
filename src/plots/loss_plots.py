@@ -23,6 +23,7 @@ from src.configs.config import (
     PLOT_TICK_FONTSIZE, PLOT_TICK_FONTWEIGHT,
     PLOT_LEGEND_FONTSIZE, PLOT_LEGEND_FONTWEIGHT,
     PLOT_GRID_ALPHA, PLOT_DPI,
+    PLOT_FIGSIZE_LOSS,
 )
 
 
@@ -58,7 +59,7 @@ def plot_lstm_loss(
     # 10th epoch, same convention as plot_transformer_loss.
     tick_positions = [e for e in epochs_range if e == 1 or e % 10 == 0]
 
-    plt.figure(figsize=(9, 5))
+    plt.figure(figsize=PLOT_FIGSIZE_LOSS)
 
     plt.plot(
         epochs_range,
@@ -118,7 +119,7 @@ def plot_transformer_loss(
     epochs_range = range(1, len(history["loss"]) + 1)
     tick_positions = [e for e in epochs_range if e == 1 or e % 10 == 0]
 
-    plt.figure(figsize=(9, 5))
+    plt.figure(figsize=PLOT_FIGSIZE_LOSS)
 
     plt.plot(
         epochs_range,
