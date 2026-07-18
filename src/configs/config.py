@@ -28,10 +28,10 @@ PLOTS_DIR_1         = GENERATED_PLOTS_DIR / "dataset1_plots"
 PLOTS_DIR_2         = GENERATED_PLOTS_DIR / "dataset2_plots"
 
 # Extra directory for all index and metric-related plots
-METRIC_INDICES_DIR  = GENERATED_PLOTS_DIR / "metric_indices_plots"
+GEOMAGNETIC_INDICES_DIR  = GENERATED_PLOTS_DIR / "geomagnetic_indices_plots"
 
 # Automatically ensure the metric directory exists when config is loaded
-METRIC_INDICES_DIR.mkdir(parents=True, exist_ok=True)
+GEOMAGNETIC_INDICES_DIR.mkdir(parents=True, exist_ok=True)
 
 #
 # Known calendar dates for specific target days.
