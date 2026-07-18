@@ -26,7 +26,7 @@ from src.configs.config import (
 )
 
 _TICK_POS = np.arange(0, 1441, 120)
-_TICK_LABELS = [f"{h:02d}:00" for h in range(0, 25, 2)]
+_TICK_LABELS = [f"{h:02d}:00" for h in range(0, 24, 2)] + ["23:59"]
 
 
 def _day_or_date(target_day: int, date_label: str = None) -> str:
@@ -150,7 +150,7 @@ def plot_transformer_prediction(
 
     minutes = np.arange(len(actual))
 
-    plt.figure(figsize=(15, 5))
+    plt.figure(figsize=(9, 6))
 
     plt.plot(
         minutes,
