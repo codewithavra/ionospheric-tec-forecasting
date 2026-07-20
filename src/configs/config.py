@@ -77,7 +77,7 @@ PLOT_FIGSIZE_DIURNAL = (11, 5)   # diurnal hourly profile
 # Ticks are placed every TIME_TICK_INTERVAL_HOURS, with the final tick
 # forced to the real last minute of the day (23:59) instead of 24:00.
 #
-TIME_TICK_INTERVAL_HOURS = 2
+TIME_TICK_INTERVAL_HOURS = 6
 
 
 def get_time_ticks(minutes_per_day: int = None, interval_hours: int = None):
