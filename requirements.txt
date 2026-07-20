@@ -3,3 +3,4 @@ matplotlib>=3.7
 torch>=2.0
 jupyterlab>=4.0
 ipykernel>=6.0
+pandas>=2.0
