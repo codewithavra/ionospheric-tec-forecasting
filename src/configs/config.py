@@ -54,9 +54,9 @@ def get_date_label(dataset_id: int, day: int):
 # (matches the LSTM loss-curve look; applied to every plot so figures
 # are consistent when pasted into the paper)
 #
-PLOT_LABEL_FONTSIZE    = 13
+PLOT_LABEL_FONTSIZE    = 38
 PLOT_LABEL_FONTWEIGHT  = "bold"
-PLOT_TICK_FONTSIZE     = 11
+PLOT_TICK_FONTSIZE     = 36
 PLOT_TICK_FONTWEIGHT   = "bold"
 PLOT_LEGEND_FONTSIZE   = 11
 PLOT_LEGEND_FONTWEIGHT = "bold"
@@ -67,7 +67,7 @@ PLOT_DPI               = 300
 # Plot Figure Sizes  (single source of truth — change a size here and
 # every plot that uses it resizes, no need to touch individual plot files)
 #
-PLOT_FIGSIZE_SINGLE  = (9, 6)    # single-panel full-day plots: TEC predictions, per-frequency delay
+PLOT_FIGSIZE_SINGLE  = (9, 12)    # single-panel full-day plots: TEC predictions, per-frequency delay
 PLOT_FIGSIZE_STACKED = (9, 10)   # two-panel stacked plots: combined L1+L5 delay
 PLOT_FIGSIZE_LOSS    = (9, 5)    # training/validation loss curves
 PLOT_FIGSIZE_DIURNAL = (11, 5)   # diurnal hourly profile

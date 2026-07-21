@@ -20,6 +20,6 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
-
+*.docx
 **/*_sorted.csv
 **/*_ionospheric_delay.csv
