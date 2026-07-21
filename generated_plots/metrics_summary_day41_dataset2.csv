@@ -1,3 +1,0 @@
-Dataset,Model,RMSE (TECU),Correlation,POD,CSI,F1 Score,FAR
-Dataset 2,LSTM,21.7137,0.9364,0.8796,0.8304,0.9074,0.063
-Dataset 2,Transformer,22.3652,0.9298,0.8102,0.7924,0.8842,0.027
