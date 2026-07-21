@@ -66,7 +66,7 @@ def plot_lstm_prediction(
     """Plot LSTM predicted vs actual TEC."""
 
     if actual_label is None:
-        actual_label = f"Actual Day {target_day}"
+        actual_label = "Actual Day"
 
     minutes = np.arange(len(actual))
 
@@ -86,7 +86,7 @@ def plot_lstm_prediction(
         color="tomato",
         linewidth=1.4,
         linestyle="--",
-        label=f"LSTM Predicted Day {target_day}",
+        label="Predicted Day",
     )
 
     plt.xlabel("Time of Day (UTC)", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
@@ -147,7 +147,7 @@ def plot_transformer_prediction(
     """Plot Transformer predicted vs actual TEC."""
 
     if actual_label is None:
-        actual_label = f"Actual Day {target_day}"
+        actual_label = "Actual Day"
 
     minutes = np.arange(len(actual))
 
@@ -167,7 +167,7 @@ def plot_transformer_prediction(
         color="darkorange",
         linewidth=1.4,
         linestyle="--",
-        label=f"Transformer Predicted Day {target_day}",
+        label="Predicted Day",
     )
 
     plt.xlabel("Time of Day (UTC)", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
