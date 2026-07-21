@@ -23,3 +23,7 @@ Thumbs.db
 *.docx
 **/*_sorted.csv
 **/*_ionospheric_delay.csv
+
+
+
+generated_plots/*
