@@ -27,11 +27,11 @@ GENERATED_PLOTS_DIR = PROJECT_ROOT / "generated_plots"
 PLOTS_DIR_1         = GENERATED_PLOTS_DIR / "dataset1_plots"
 PLOTS_DIR_2         = GENERATED_PLOTS_DIR / "dataset2_plots"
 
-# Extra directory for all index and metric-related plots
-GEOMAGNETIC_INDICES_DIR  = GENERATED_PLOTS_DIR / "geomagnetic_indices_plots"
-
-# Automatically ensure the metric directory exists when config is loaded
-GEOMAGNETIC_INDICES_DIR.mkdir(parents=True, exist_ok=True)
+#
+# Which dataset / target days this run covers.
+#
+DATASET_NO   = 2
+TARGET_DAYS  = (33, 37, 40, 41)
 
 #
 # Known calendar dates for specific target days.
@@ -40,7 +40,12 @@ GEOMAGNETIC_INDICES_DIR.mkdir(parents=True, exist_ok=True)
 # here just falls back to a "dayN" label automatically.
 #
 DATASET_DATES = {
-    2: {40: "09_May_2024", 41: "10_May_2024"},
+    2: {
+        33: "02_May_2024_G3_Storm",
+        37: "06_May_2024_G2_Storm",
+        40: "09_May_2024",
+        41: "10_May_2024_G5_Storm",
+    },
 }
 
 
@@ -51,33 +56,53 @@ def get_date_label(dataset_id: int, day: int):
 
 #
 # Publication-consistent plot styling
-# (matches the LSTM loss-curve look; applied to every plot so figures
-# are consistent when pasted into the paper)
 #
-PLOT_LABEL_FONTSIZE    = 38
-PLOT_LABEL_FONTWEIGHT  = "bold"
-PLOT_TICK_FONTSIZE     = 36
-PLOT_TICK_FONTWEIGHT   = "bold"
-PLOT_LEGEND_FONTSIZE   = 11
-PLOT_LEGEND_FONTWEIGHT = "bold"
+PLOT_LABEL_FONTSIZE    = 30
+PLOT_LABEL_FONTWEIGHT  = "normal"
+PLOT_TICK_FONTSIZE     = 28
+PLOT_TICK_FONTWEIGHT   = "normal"
+PLOT_LEGEND_FONTSIZE   = 25
+PLOT_LEGEND_FONTWEIGHT = "normal"
 PLOT_GRID_ALPHA        = 0.35
+PLOT_GRID_LINEWIDTH    = 0.6
 PLOT_DPI               = 300
 
 #
 # Plot Figure Sizes  (single source of truth — change a size here and
 # every plot that uses it resizes, no need to touch individual plot files)
 #
-PLOT_FIGSIZE_SINGLE  = (9, 12)    # single-panel full-day plots: TEC predictions, per-frequency delay
+PLOT_FIGSIZE_SINGLE  = (9, 6)    # full-day series is wide, not tall
 PLOT_FIGSIZE_STACKED = (9, 10)   # two-panel stacked plots: combined L1+L5 delay
 PLOT_FIGSIZE_LOSS    = (9, 5)    # training/validation loss curves
 PLOT_FIGSIZE_DIURNAL = (11, 5)   # diurnal hourly profile
+
+#
+# Legend placement (shared by every full-day time-series plot)
+#
+PLOT_LEGEND_ANCHOR       = (0.5, 1.02)     # above the axes, centered
+PLOT_LEGEND_LOC          = "lower center"
+PLOT_LEGEND_ANCHOR_RIGHT = (0.5, -0.25)    # below the x-axis label, horizontally centered
+PLOT_LEGEND_LOC_RIGHT    = "upper center"
+
+#
+# Colors — actual vs. per-model prediction traces
+#
+COLOR_ACTUAL      = "steelblue"
+COLOR_LSTM_PRED    = "tomato"
+COLOR_TRANS_PRED   = "darkorange"
+
+# Combined L1 + L5 delay plot colors
+COLOR_L1_ACTUAL = "steelblue"
+COLOR_L1_PRED   = "tomato"
+COLOR_L5_ACTUAL = "navy"
+COLOR_L5_PRED   = "firebrick"
 
 #
 # Time-of-Day X-Axis Ticks  (shared by every full-day plot)
 # Ticks are placed every TIME_TICK_INTERVAL_HOURS, with the final tick
 # forced to the real last minute of the day (23:59) instead of 24:00.
 #
-TIME_TICK_INTERVAL_HOURS = 6
+TIME_TICK_INTERVAL_HOURS = 12
 
 
 def get_time_ticks(minutes_per_day: int = None, interval_hours: int = None):
@@ -155,7 +180,7 @@ TRANS_WARMUP_EPOCHS = 10
 TRANS_SEED          = 42
 
 #
-#Event Threshold
+# Event Threshold
 #
 EVENT_THRESHOLD_PERCENTILE  = 65.0
 DELAY_EVENT_THRESHOLDS_M = (3.0, 8.0, 15.0)
