@@ -22,10 +22,10 @@ The notebook workflow in [code.ipynb](code.ipynb) includes two experimental data
   - [DataSet/DataSet1](DataSet/DataSet1)
   - [DataSet/DataSet2](DataSet/DataSet2)
 - Preprocessing:
-  - daily files are sorted into per-day CSVs in the sortedDataSet folders
-  - each day is loaded as a 1440-point vector
-  - input/target pairs are built as day $t$ → day $t+1$
-  - training and validation splits are created from the full 41-day sequence
+  - Daily files are sorted into per-day CSVs in the sortedDataSet folders
+  - Each day is loaded as a 1440-point vector
+  - Input/Target pairs are built as day $t$ → day $t+1$
+  - Training and validation splits are created from the full 41-day sequence
 
 ## Models
 
