@@ -8,9 +8,6 @@ real calendar date when known), and an optional dataset label, e.g.:
 
     actual_vs_predicted_LSTM_10_May_2024_dataset2.png
     actual_vs_predicted_transformer_day41_dataset1.png
-
-Pass `filename=` to override the auto-generated name, or `save=False`
-to skip saving entirely.
 """
 
 import os
@@ -19,15 +16,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from src.configs.config import (
-    PLOT_LABEL_FONTSIZE, PLOT_LABEL_FONTWEIGHT,
-    PLOT_TICK_FONTSIZE, PLOT_TICK_FONTWEIGHT,
-    PLOT_LEGEND_FONTSIZE, PLOT_LEGEND_FONTWEIGHT,
-    PLOT_GRID_ALPHA, PLOT_DPI,
+    PLOT_DPI,
     PLOT_FIGSIZE_SINGLE,
-    get_time_ticks,
+    COLOR_ACTUAL, COLOR_LSTM_PRED, COLOR_TRANS_PRED,
 )
-
-_TICK_POS, _TICK_LABELS = get_time_ticks()
+from src.utils.plot_style import _style_timeseries_ax, _legend_above
 
 
 def _day_or_date(target_day: int, date_label: str = None) -> str:
@@ -35,184 +28,89 @@ def _day_or_date(target_day: int, date_label: str = None) -> str:
     return date_label if date_label else f"day{target_day}"
 
 
-# ── saving helpers ────────────────────────────────────────────────────────────
-
 def _make_filename(*parts: object) -> str:
     """Build a `part1_part2..._partN.png` filename, skipping empty parts."""
     clean = [str(p) for p in parts if p not in (None, "")]
     return "_".join(clean) + ".png"
 
 
-def _resolve_save_path(output_dir: str, filename: str, *default_name_parts: object) -> str:
-    os.makedirs(output_dir, exist_ok=True)
-    if filename is None:
-        filename = _make_filename(*default_name_parts)
-    return os.path.join(output_dir, filename)
-
-
 def plot_lstm_prediction(
     actual: np.ndarray,
     lstm_pred: np.ndarray,
-    actual_label: str = None,
     target_day: int = 41,
     dataset_label: str = None,
     date_label: str = None,
-    legend_loc: str = "best",
-    legend_size: int = PLOT_LEGEND_FONTSIZE,
     output_dir: str = "plots",
-    filename: str = None,
     save: bool = True,
 ) -> tuple[float, float]:
-    """Plot LSTM predicted vs actual TEC."""
-
-    if actual_label is None:
-        actual_label = "Actual Day"
-
+    """Plot LSTM predicted vs actual TEC for a full day."""
     minutes = np.arange(len(actual))
+    fig, ax = plt.subplots(figsize=PLOT_FIGSIZE_SINGLE)
 
-    plt.figure(figsize=PLOT_FIGSIZE_SINGLE)
+    ax.plot(minutes, actual, color=COLOR_ACTUAL, linewidth=1.8, label="Actual", zorder=3)
+    ax.plot(minutes, lstm_pred, color=COLOR_LSTM_PRED, linewidth=1.6,
+            linestyle="--", label="LSTM Predicted", zorder=3)
+    ax.fill_between(minutes, actual, lstm_pred, color=COLOR_LSTM_PRED, alpha=0.12, zorder=1)
 
-    plt.plot(
-        minutes,
-        actual,
-        color="steelblue",
-        linewidth=1.4,
-        label=actual_label,
-    )
+    ax.set_xlim(0, len(minutes) - 1)
+    _style_timeseries_ax(ax, "TEC (TECU)")
+    _legend_above(ax, ncol=2)
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
 
-    plt.plot(
-        minutes,
-        lstm_pred,
-        color="tomato",
-        linewidth=1.4,
-        linestyle="--",
-        label="Predicted Day",
-    )
-
-    plt.xlabel("Time of Day (UTC)", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
-    plt.ylabel("TEC (TECU)", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
-
-    plt.xticks(
-        ticks=_TICK_POS,
-        labels=_TICK_LABELS,
-        rotation=45,
-        fontsize=PLOT_TICK_FONTSIZE,
-        fontweight=PLOT_TICK_FONTWEIGHT,
-    )
-
-    plt.yticks(fontsize=PLOT_TICK_FONTSIZE, fontweight=PLOT_TICK_FONTWEIGHT)
-
-    plt.legend(
-        loc=legend_loc,
-        prop={"weight": PLOT_LEGEND_FONTWEIGHT, "size": legend_size},
-    )
-
-    plt.grid(True, alpha=PLOT_GRID_ALPHA)
-    plt.tight_layout()
-
-    # Save figure
     if save:
-        path = _resolve_save_path(
-            output_dir, filename,
-            "actual_vs_predicted_LSTM", _day_or_date(target_day, date_label), dataset_label,
+        os.makedirs(output_dir, exist_ok=True)
+        path = os.path.join(
+            output_dir,
+            _make_filename("actual_vs_predicted_LSTM", _day_or_date(target_day, date_label), dataset_label),
         )
-        plt.savefig(path, dpi=PLOT_DPI, bbox_inches="tight")
+        fig.savefig(path, dpi=PLOT_DPI, bbox_inches="tight")
         print(f"Saved: {path}")
 
     plt.show()
-    plt.close()
 
-    rmse = float(np.sqrt(np.mean((lstm_pred - actual) ** 2)))
-    mae = float(np.mean(np.abs(lstm_pred - actual)))
-
-    print(f"LSTM Day-{target_day} RMSE : {rmse:.4f} TECU")
-    print(f"LSTM Day-{target_day} MAE  : {mae:.4f} TECU")
-
-    return rmse, mae
+    rmse_v = float(np.sqrt(np.mean((lstm_pred - actual) ** 2)))
+    mae_v = float(np.mean(np.abs(lstm_pred - actual)))
+    print(f"LSTM Day-{target_day} RMSE : {rmse_v:.4f} TECU")
+    print(f"LSTM Day-{target_day} MAE  : {mae_v:.4f} TECU")
+    return rmse_v, mae_v
 
 
 def plot_transformer_prediction(
     actual: np.ndarray,
     trans_pred: np.ndarray,
-    actual_label: str = None,
     target_day: int = 41,
     dataset_label: str = None,
     date_label: str = None,
-    legend_loc: str = "best",
-    legend_size: int = PLOT_LEGEND_FONTSIZE,
     output_dir: str = "plots",
-    filename: str = None,
     save: bool = True,
 ) -> tuple[float, float]:
-    """Plot Transformer predicted vs actual TEC."""
-
-    if actual_label is None:
-        actual_label = "Actual Day"
-
+    """Plot Transformer predicted vs actual TEC for a full day."""
     minutes = np.arange(len(actual))
+    fig, ax = plt.subplots(figsize=PLOT_FIGSIZE_SINGLE)
 
-    plt.figure(figsize=PLOT_FIGSIZE_SINGLE)
+    ax.plot(minutes, actual, color=COLOR_ACTUAL, linewidth=1.8, label="Actual", zorder=3)
+    ax.plot(minutes, trans_pred, color=COLOR_TRANS_PRED, linewidth=1.6,
+            linestyle="--", label="Transformer Predicted", zorder=3)
+    ax.fill_between(minutes, actual, trans_pred, color=COLOR_TRANS_PRED, alpha=0.15, zorder=1)
 
-    plt.plot(
-        minutes,
-        actual,
-        color="steelblue",
-        linewidth=1.4,
-        label=actual_label,
-    )
+    ax.set_xlim(0, len(minutes) - 1)
+    _style_timeseries_ax(ax, "TEC (TECU)")
+    _legend_above(ax, ncol=2)
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
 
-    plt.plot(
-        minutes,
-        trans_pred,
-        color="darkorange",
-        linewidth=1.4,
-        linestyle="--",
-        label="Predicted Day",
-    )
-
-    plt.xlabel("Time of Day (UTC)", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
-    plt.ylabel("TEC (TECU)", fontsize=PLOT_LABEL_FONTSIZE, fontweight=PLOT_LABEL_FONTWEIGHT)
-
-    plt.xticks(
-        ticks=_TICK_POS,
-        labels=_TICK_LABELS,
-        rotation=45,
-        fontsize=PLOT_TICK_FONTSIZE,
-        fontweight=PLOT_TICK_FONTWEIGHT,
-    )
-
-    plt.yticks(
-        fontsize=PLOT_TICK_FONTSIZE,
-        fontweight=PLOT_TICK_FONTWEIGHT,
-    )
-
-    plt.legend(
-        loc=legend_loc,
-        prop={
-            "weight": PLOT_LEGEND_FONTWEIGHT,
-            "size": legend_size,
-        },
-    )
-
-    plt.grid(True, alpha=PLOT_GRID_ALPHA)
-    plt.tight_layout()
-
-    # Save figure
     if save:
-        path = _resolve_save_path(
-            output_dir, filename,
-            "actual_vs_predicted_transformer", _day_or_date(target_day, date_label), dataset_label,
+        os.makedirs(output_dir, exist_ok=True)
+        path = os.path.join(
+            output_dir,
+            _make_filename("actual_vs_predicted_transformer", _day_or_date(target_day, date_label), dataset_label),
         )
-        plt.savefig(path, dpi=PLOT_DPI, bbox_inches="tight")
+        fig.savefig(path, dpi=PLOT_DPI, bbox_inches="tight")
         print(f"Saved: {path}")
 
     plt.show()
-    plt.close()
 
-    rmse = float(np.sqrt(np.mean((trans_pred - actual) ** 2)))
-    mae = float(np.mean(np.abs(trans_pred - actual)))
-
-    print(f"Transformer Day-{target_day} RMSE : {rmse:.4f} TECU")
-    print(f"Transformer Day-{target_day} MAE  : {mae:.4f} TECU")
-
-    return rmse, mae
+    rmse_v = float(np.sqrt(np.mean((trans_pred - actual) ** 2)))
+    mae_v = float(np.mean(np.abs(trans_pred - actual)))
+    print(f"Transformer Day-{target_day} RMSE : {rmse_v:.4f} TECU")
+    print(f"Transformer Day-{target_day} MAE  : {mae_v:.4f} TECU")
+    return rmse_v, mae_v
