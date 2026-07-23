@@ -89,10 +89,10 @@ src/
 
 The workflow produces:
 
-- training and validation loss curves
+- Training and validation loss curves
 - TEC forecast plots for the LSTM and Transformer
-- ionospheric delay plots for L1, L2, and L5
-- a summary CSV with actual and predicted TEC plus ionospheric delay values
+- Ionospheric delay plots for L1, L2, and L5
+- A summary CSV with actual and predicted TEC plus ionospheric delay values
 
 ## Attribution
 
